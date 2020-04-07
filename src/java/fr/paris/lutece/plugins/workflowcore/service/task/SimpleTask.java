@@ -47,32 +47,8 @@ public abstract class SimpleTask extends Task
      * {@inheritDoc}
      */
     @Override
-    public void init( )
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Map<String, String> getTaskFormEntries( Locale locale )
     {
         return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doRemoveConfig( )
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doRemoveTaskInformation( int nIdHistory )
-    {
     }
 }
