@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -96,8 +96,8 @@ public interface IWorkflowService
     List<Workflow> getListWorkflowsByFilter( WorkflowFilter filter );
 
     /**
-     * returns a list of actions possible for a given resource based on the status of the resource in the workflow, the user role
-     * and if the prerequisites are satisfied.
+     * returns a list of actions possible for a given resource based on the status of the resource in the workflow, the user role and if the prerequisites are
+     * satisfied.
      * 
      * @param nIdResource
      *            the resource id

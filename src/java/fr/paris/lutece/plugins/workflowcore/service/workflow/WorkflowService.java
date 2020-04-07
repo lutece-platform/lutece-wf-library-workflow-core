@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -205,7 +205,7 @@ public class WorkflowService implements IWorkflowService
             filter.setIdWorkflow( nIdWorkflow );
             listAction = _actionService.getListActionByFilter( filter );
         }
-        
+
         return listAction;
     }
 
@@ -230,8 +230,8 @@ public class WorkflowService implements IWorkflowService
             initialState = listState.get( 0 );
         }
 
-        Map<Integer, Integer> listIdsState = _resourceWorkflowService
-                .getListIdStateByListId( listIdResource, nIdWorkflow, strResourceType, nIdExternalParentId );
+        Map<Integer, Integer> listIdsState = _resourceWorkflowService.getListIdStateByListId( listIdResource, nIdWorkflow, strResourceType,
+                nIdExternalParentId );
 
         listIdResource.removeAll( listIdsState.keySet( ) );
 
@@ -452,8 +452,8 @@ public class WorkflowService implements IWorkflowService
             }
 
             // Create ResourceHistory
-            ResourceHistory resourceHistory = _resourceHistoryFactory
-                    .newResourceHistory( nIdResource, strResourceType, action, strUserAccessCode, bIsAutomatic );
+            ResourceHistory resourceHistory = _resourceHistoryFactory.newResourceHistory( nIdResource, strResourceType, action, strUserAccessCode,
+                    bIsAutomatic );
             _resourceHistoryService.create( resourceHistory );
 
             List<ITask> listActionTasks = _taskService.getListTaskByIdAction( nIdAction, locale );
