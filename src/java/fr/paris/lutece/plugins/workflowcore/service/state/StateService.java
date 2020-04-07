@@ -43,6 +43,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+
 /**
  *
  * StateService
@@ -138,12 +140,7 @@ public class StateService implements IStateService
 
         List<State> listState = getListStateByFilter( filter );
 
-        if ( listState.size( ) != 0 )
-        {
-            return listState.get( 0 );
-        }
-
-        return null;
+        return CollectionUtils.isNotEmpty( listState ) ? listState.get( 0 ) : null;
     }
 
     /**

@@ -33,11 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflowcore.business.resource;
 
-import fr.paris.lutece.plugins.workflowcore.business.action.Action;
-
 import java.sql.Timestamp;
+import java.util.Calendar;
 
-import java.util.GregorianCalendar;
+import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 
 /**
  *
@@ -59,7 +58,7 @@ public class ResourceHistoryFactory implements IResourceHistoryFactory
         resourceHistory.setResourceType( strResourceType );
         resourceHistory.setAction( action );
         resourceHistory.setWorkFlow( action.getWorkflow( ) );
-        resourceHistory.setCreationDate( new Timestamp( GregorianCalendar.getInstance( ).getTimeInMillis( ) ) );
+        resourceHistory.setCreationDate( new Timestamp( Calendar.getInstance( ).getTimeInMillis( ) ) );
 
         if ( isAutomatic )
         {

@@ -100,48 +100,42 @@ public abstract class TaskComponent implements ITaskComponent
             }
         }
 
-        if ( config != null )
-        {
-            try
-            {
-                BeanUtils.populate( config, request.getParameterMap( ) );
-
-                String strApply = request.getParameter( PARAMETER_APPLY );
-
-                // Check if the AdminUser clicked on "Apply" or on "Save"
-                if ( StringUtils.isEmpty( strApply ) )
-                {
-                    String strJspError = this.validateConfig( config, request );
-
-                    if ( StringUtils.isNotBlank( strJspError ) )
-                    {
-                        return strJspError;
-                    }
-                }
-
-                if ( bCreate )
-                {
-                    _taskConfigService.create( config );
-                }
-                else
-                {
-                    _taskConfigService.update( config );
-                }
-            }
-            catch( IllegalAccessException e )
-            {
-                _logger.error( e.getMessage( ), e );
-            }
-            catch( InvocationTargetException e )
-            {
-                _logger.error( e.getMessage( ), e );
-            }
-        }
-        else
+        if ( config == null )
         {
             _logger.error( "TaskComponent - could not instanciate a new TaskConfig for type " + _taskType.getKey( ) );
+            return null;
         }
 
+        try
+        {
+            BeanUtils.populate( config, request.getParameterMap( ) );
+
+            String strApply = request.getParameter( PARAMETER_APPLY );
+
+            // Check if the AdminUser clicked on "Apply" or on "Save"
+            if ( StringUtils.isEmpty( strApply ) )
+            {
+                String strJspError = this.validateConfig( config, request );
+
+                if ( StringUtils.isNotBlank( strJspError ) )
+                {
+                    return strJspError;
+                }
+            }
+
+            if ( bCreate )
+            {
+                _taskConfigService.create( config );
+            }
+            else
+            {
+                _taskConfigService.update( config );
+            }
+        }
+        catch( InvocationTargetException | IllegalAccessException e )
+        {
+            _logger.error( e.getMessage( ), e );
+        }
         return null;
     }
 

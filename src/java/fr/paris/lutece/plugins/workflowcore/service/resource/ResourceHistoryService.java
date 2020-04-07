@@ -41,6 +41,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+
 /**
  *
  * ResourceHistoryService
@@ -153,6 +155,6 @@ public class ResourceHistoryService implements IResourceHistoryService
             resourceHistory.setAction( _actionService.findByPrimaryKey( resourceHistory.getAction( ).getId( ) ) );
         }
 
-        return ( listResourceHistory.size( ) > 0 ) ? listResourceHistory.get( 0 ) : null;
+        return CollectionUtils.isNotEmpty( listResourceHistory ) ? listResourceHistory.get( 0 ) : null;
     }
 }
