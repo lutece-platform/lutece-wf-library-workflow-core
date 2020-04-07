@@ -133,7 +133,9 @@ public interface ITask
     /**
      * Initialize the task
      */
-    void init( );
+    default void init( )
+    {
+    }
 
     /**
      * Remove taskInformation associate to the history
@@ -141,12 +143,16 @@ public interface ITask
      * @param nIdHistory
      *            the document id
      */
-    void doRemoveTaskInformation( int nIdHistory );
+    default void doRemoveTaskInformation( int nIdHistory )
+    {
+    }
 
     /**
      * Remove the task configuration
      */
-    void doRemoveConfig( );
+    default void doRemoveConfig( )
+    {
+    }
 
     /**
      * get the order of a task
