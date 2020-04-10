@@ -148,4 +148,16 @@ public interface ITaskService
      *            the locale
      */
     void initializeTaskOrder( int nIdAction, Locale locale );
+    
+    /**
+     * Select the tasks with the given taskType associated to the action
+     * 
+     * @param nIdAction
+     *            the action key
+     * @param taskType Name of the taskType
+     * @param locale
+     *            the locale
+     * @return Task list
+     */
+    List<ITask> getListTaskByIdActionAndTaskType( int nIdAction, String taskType, Locale locale );
 }
