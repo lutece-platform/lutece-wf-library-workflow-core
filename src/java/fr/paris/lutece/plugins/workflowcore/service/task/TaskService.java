@@ -34,9 +34,12 @@
 package fr.paris.lutece.plugins.workflowcore.service.task;
 
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskDAO;
+import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -149,5 +152,21 @@ public class TaskService implements ITaskService
             update( task );
             nOrder++;
         }
+    }
+    
+    @Override
+    public List<ITask> getListTaskByIdActionAndTaskType( int nIdAction, String taskType, Locale locale )
+    {
+        List<ITask> result = new ArrayList<>( );
+        List<ITask> allTasks = getListTaskByIdAction( nIdAction, locale );
+        for ( ITask task : allTasks )
+        {
+            String currentType = Optional.ofNullable( task ).map( ITask::getTaskType ).map( ITaskType::getBeanName ).orElse( null );
+            if ( taskType.equals( currentType ) )
+            {
+                result.add( task );
+            }
+        }
+        return result;
     }
 }
