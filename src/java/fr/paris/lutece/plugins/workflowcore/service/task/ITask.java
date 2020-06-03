@@ -91,6 +91,7 @@ public interface ITask
      *            the request
      * @param locale
      *            locale
+     * @deprecated use processTask(int,HttpServletRequest,Locale,User)
      */
     @Deprecated
     void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale );

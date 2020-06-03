@@ -153,7 +153,7 @@ public class TaskService implements ITaskService
             nOrder++;
         }
     }
-    
+
     @Override
     public List<ITask> getListTaskByIdActionAndTaskType( int nIdAction, String taskType, Locale locale )
     {

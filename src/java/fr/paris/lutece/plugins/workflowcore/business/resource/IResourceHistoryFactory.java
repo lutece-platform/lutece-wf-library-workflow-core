@@ -57,6 +57,7 @@ public interface IResourceHistoryFactory
      * @param isAutomatic
      *            true if the action is executed automatically, false otherwise
      * @return a new instance of {@link ResourceHistory}
+     * @deprecated use newResourceHistory(in,String,Action,String,boolean,user)
      */
     @Deprecated
     ResourceHistory newResourceHistory( int nIdResource, String strResourceType, Action action, String strUserAccessCode, boolean isAutomatic );
