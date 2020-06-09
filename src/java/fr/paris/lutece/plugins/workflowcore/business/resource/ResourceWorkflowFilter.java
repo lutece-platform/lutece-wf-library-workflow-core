@@ -33,9 +33,9 @@
  */
 package fr.paris.lutece.plugins.workflowcore.business.resource;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *

@@ -33,26 +33,22 @@
  */
 package fr.paris.lutece.plugins.workflowcore.web.task;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.util.Assert;
+
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
-
-import org.apache.log4j.Logger;
-
-import org.springframework.util.Assert;
-
-import java.lang.reflect.InvocationTargetException;
-
-import java.util.Locale;
-
-import javax.inject.Inject;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  *
