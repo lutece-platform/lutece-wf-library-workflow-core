@@ -97,7 +97,11 @@ public class Icon implements IReferenceItem
      */
     public byte [ ] getValue( )
     {
-        return _byValue;
+        if ( _byValue == null )
+        {
+            return null;
+        }
+        return _byValue.clone( );
     }
 
     /**
@@ -108,7 +112,14 @@ public class Icon implements IReferenceItem
      */
     public void setValue( byte [ ] value )
     {
-        _byValue = value;
+        if ( value == null )
+        {
+            _byValue = null;
+        }
+        else
+        {
+            _byValue = value.clone( );
+        }
     }
 
     /**

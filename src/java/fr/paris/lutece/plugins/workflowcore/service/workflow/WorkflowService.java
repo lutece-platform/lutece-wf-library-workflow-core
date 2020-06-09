@@ -44,6 +44,7 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.api.user.User;
@@ -68,6 +69,7 @@ import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskFactory;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
+import fr.paris.lutece.plugins.workflowcore.util.exception.WorkflowException;
 
 /**
  *
@@ -176,7 +178,7 @@ public class WorkflowService implements IWorkflowService
     @Override
     public Collection<Action> getActions( int nIdResource, String strResourceType, int nIdWorkflow )
     {
-        List<Action> listAction = new ArrayList<Action>( );
+        List<Action> listAction = new ArrayList<>( );
         State resourceState = null;
         ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( nIdResource, strResourceType, nIdWorkflow );
 
@@ -193,7 +195,7 @@ public class WorkflowService implements IWorkflowService
 
             List<State> listState = _stateService.getListStateByFilter( filter );
 
-            if ( listState.size( ) > 0 )
+            if ( CollectionUtils.isNotEmpty( listState ) )
             {
                 resourceState = listState.get( 0 );
             }
@@ -216,7 +218,7 @@ public class WorkflowService implements IWorkflowService
     @Override
     public Map<Integer, List<Action>> getActions( List<Integer> listIdResource, String strResourceType, Integer nIdExternalParentId, int nIdWorkflow )
     {
-        Map<Integer, List<Action>> result = new HashMap<Integer, List<Action>>( );
+        Map<Integer, List<Action>> result = new HashMap<>( );
         State initialState = null;
 
         // Get initial state
@@ -226,7 +228,7 @@ public class WorkflowService implements IWorkflowService
 
         List<State> listState = _stateService.getListStateByFilter( filter );
 
-        if ( listState.size( ) > 0 )
+        if ( CollectionUtils.isNotEmpty( listState ) )
         {
             initialState = listState.get( 0 );
         }
@@ -242,7 +244,7 @@ public class WorkflowService implements IWorkflowService
 
         List<State> listAllState = _stateService.getListStateByFilter( filterAll );
 
-        Map<Integer, List<Action>> listActionByStateId = new HashMap<Integer, List<Action>>( );
+        Map<Integer, List<Action>> listActionByStateId = new HashMap<>( );
 
         for ( State state : listAllState )
         {
@@ -341,9 +343,9 @@ public class WorkflowService implements IWorkflowService
     public Map<String, String> getMapTaskTypes( Locale locale )
     {
         Collection<ITaskType> listTaskTypes = _taskFactory.getAllTaskTypes( locale );
-        Map<String, String> mapTaskTypes = new HashMap<String, String>( );
+        Map<String, String> mapTaskTypes = new HashMap<>( );
 
-        if ( ( listTaskTypes != null ) && !listTaskTypes.isEmpty( ) )
+        if ( CollectionUtils.isNotEmpty( listTaskTypes ) )
         {
             for ( ITaskType taskType : listTaskTypes )
             {
@@ -367,7 +369,7 @@ public class WorkflowService implements IWorkflowService
 
         List<State> listInitialState = _stateService.getListStateByFilter( filter );
 
-        if ( ( listInitialState != null ) && !listInitialState.isEmpty( ) )
+        if ( CollectionUtils.isNotEmpty( listInitialState ) )
         {
             resourceWorkflow = new ResourceWorkflow( );
             resourceWorkflow.setIdResource( nIdResource );
@@ -438,69 +440,71 @@ public class WorkflowService implements IWorkflowService
     {
         Action action = _actionService.findByPrimaryKey( nIdAction );
 
-        if ( ( action != null ) && canProcessAction( nIdResource, strResourceType, nIdAction, nIdExternalParent ) )
+        if ( action == null || !canProcessAction( nIdResource, strResourceType, nIdAction, nIdExternalParent ) )
         {
-            ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( nIdResource, strResourceType, action.getWorkflow( ).getId( ) );
+            return;
+        }
+        
+        ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( nIdResource, strResourceType, action.getWorkflow( ).getId( ) );
 
-            if ( resourceWorkflow == null )
+        if ( resourceWorkflow == null )
+        {
+            resourceWorkflow = getInitialResourceWorkflow( nIdResource, strResourceType, action.getWorkflow( ), nIdExternalParent );
+
+            if ( resourceWorkflow != null )
             {
-                resourceWorkflow = getInitialResourceWorkflow( nIdResource, strResourceType, action.getWorkflow( ), nIdExternalParent );
+                _resourceWorkflowService.create( resourceWorkflow );
+            }
+        }
 
-                if ( resourceWorkflow != null )
-                {
-                    _resourceWorkflowService.create( resourceWorkflow );
-                }
+        // Create ResourceHistory
+        ResourceHistory resourceHistory = _resourceHistoryFactory.newResourceHistory( nIdResource, strResourceType, action, strUserAccessCode, bIsAutomatic,
+                user );
+        _resourceHistoryService.create( resourceHistory );
+
+        List<ITask> listActionTasks = _taskService.getListTaskByIdAction( nIdAction, locale );
+
+        for ( ITask task : listActionTasks )
+        {
+            task.setAction( action );
+
+            try
+            {
+                task.processTask( resourceHistory.getId( ), request, locale, user );
+            }
+            catch( Exception e )
+            {
+                // Revert the creation of the resource history
+                _resourceHistoryService.remove( resourceHistory.getId( ) );
+
+                throw new WorkflowException( "WorkflowService - Error when executing task ID " + task.getId( ), e );
+            }
+        }
+
+        // Reload the resource workflow in case a task had modified it
+        resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( nIdResource, strResourceType, action.getWorkflow( ).getId( ) );
+        resourceWorkflow.setState( action.getStateAfter( ) );
+        resourceWorkflow.setExternalParentId( nIdExternalParent );
+        _resourceWorkflowService.update( resourceWorkflow );
+
+        if ( ( action.getStateAfter( ) != null ) && !action.isAutomaticReflexiveAction( ) )
+        {
+            if ( action.getStateBefore( ).getId( ) != action.getStateAfter( ).getId( ) )
+            {
+                doProcessAutomaticReflexiveActions( nIdResource, strResourceType, action.getStateAfter( ).getId( ), nIdExternalParent, locale );
             }
 
-            // Create ResourceHistory
-            ResourceHistory resourceHistory = _resourceHistoryFactory.newResourceHistory( nIdResource, strResourceType, action, strUserAccessCode, bIsAutomatic,
-                    user );
-            _resourceHistoryService.create( resourceHistory );
+            State state = action.getStateAfter( );
+            ActionFilter actionFilter = new ActionFilter( );
+            actionFilter.setIdWorkflow( action.getWorkflow( ).getId( ) );
+            actionFilter.setIdStateBefore( state.getId( ) );
+            actionFilter.setIsAutomaticState( 1 );
 
-            List<ITask> listActionTasks = _taskService.getListTaskByIdAction( nIdAction, locale );
+            List<Action> listAction = _actionService.getListActionByFilter( actionFilter );
 
-            for ( ITask task : listActionTasks )
+            if ( ( listAction != null ) && !listAction.isEmpty( ) && ( listAction.get( 0 ) != null ) )
             {
-                task.setAction( action );
-
-                try
-                {
-                    task.processTask( resourceHistory.getId( ), request, locale, user );
-                }
-                catch( Exception e )
-                {
-                    // Revert the creation of the resource history
-                    _resourceHistoryService.remove( resourceHistory.getId( ) );
-
-                    throw new RuntimeException( "WorkflowService - Error when executing task ID " + task.getId( ), e );
-                }
-            }
-
-            // Reload the resource workflow in case a task had modified it
-            resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( nIdResource, strResourceType, action.getWorkflow( ).getId( ) );
-            resourceWorkflow.setState( action.getStateAfter( ) );
-            resourceWorkflow.setExternalParentId( nIdExternalParent );
-            _resourceWorkflowService.update( resourceWorkflow );
-
-            if ( ( action.getStateAfter( ) != null ) && !action.isAutomaticReflexiveAction( ) )
-            {
-                if ( action.getStateBefore( ).getId( ) != action.getStateAfter( ).getId( ) )
-                {
-                    doProcessAutomaticReflexiveActions( nIdResource, strResourceType, action.getStateAfter( ).getId( ), nIdExternalParent, locale );
-                }
-
-                State state = action.getStateAfter( );
-                ActionFilter actionFilter = new ActionFilter( );
-                actionFilter.setIdWorkflow( action.getWorkflow( ).getId( ) );
-                actionFilter.setIdStateBefore( state.getId( ) );
-                actionFilter.setIsAutomaticState( 1 );
-
-                List<Action> listAction = _actionService.getListActionByFilter( actionFilter );
-
-                if ( ( listAction != null ) && !listAction.isEmpty( ) && ( listAction.get( 0 ) != null ) )
-                {
-                    doProcessAction( nIdResource, strResourceType, listAction.get( 0 ).getId( ), nIdExternalParent, request, locale, true, null, user );
-                }
+                doProcessAction( nIdResource, strResourceType, listAction.get( 0 ).getId( ), nIdExternalParent, request, locale, true, null, user );
             }
         }
     }
@@ -529,7 +533,7 @@ public class WorkflowService implements IWorkflowService
 
         List<Action> listAction = _actionService.getListActionByFilter( actionFilter );
 
-        if ( ( listAction != null ) && ( listAction.size( ) > 0 ) )
+        if ( CollectionUtils.isNotEmpty( listAction ) )
         {
             for ( Action action : listAction )
             {
@@ -572,7 +576,7 @@ public class WorkflowService implements IWorkflowService
     public void doRemoveWorkFlowResource( int nIdResource, String strResourceType, int nIdWorkflow )
     {
         List<ResourceHistory> listResourceHistoryToRemove;
-        List<ITask> listTask = new ArrayList<ITask>( );
+        List<ITask> listTask = new ArrayList<>( );
         List<Action> listWorkflowAction;
 
         listResourceHistoryToRemove = _resourceHistoryService.getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
@@ -618,7 +622,7 @@ public class WorkflowService implements IWorkflowService
         actionFilter.setIdWorkflow( nIdWorflow );
 
         List<Action> listWorkflowAction = _actionService.getListActionByFilter( actionFilter );
-        List<ITask> listTask = new ArrayList<ITask>( );
+        List<ITask> listTask = new ArrayList<>( );
 
         for ( Action action : listWorkflowAction )
         {
@@ -657,7 +661,7 @@ public class WorkflowService implements IWorkflowService
 
             List<Action> listAction = _actionService.getListActionByFilter( actionFilter );
 
-            if ( ( listAction != null ) && !listAction.isEmpty( ) && ( listAction.get( 0 ) != null ) )
+            if ( CollectionUtils.isNotEmpty( listAction ) && listAction.get( 0 ) != null )
             {
                 doProcessAction( nIdResource, strResourceType, listAction.get( 0 ).getId( ), nExternalParentId, null, null, true, null, user );
             }
@@ -681,12 +685,12 @@ public class WorkflowService implements IWorkflowService
     {
         List<ResourceWorkflow> listResourceWorkflow = _resourceWorkflowService.getAllResourceWorkflowByState( nIdState );
 
-        if ( ( listResourceWorkflow == null ) || ( listResourceWorkflow.size( ) == 0 ) )
+        if ( CollectionUtils.isEmpty( listResourceWorkflow ) )
         {
-            return new ArrayList<Integer>( );
+            return new ArrayList<>( );
         }
 
-        List<Integer> listResourceId = new ArrayList<Integer>( listResourceWorkflow.size( ) );
+        List<Integer> listResourceId = new ArrayList<>( listResourceWorkflow.size( ) );
 
         for ( ResourceWorkflow resourceWorkflow : listResourceWorkflow )
         {
