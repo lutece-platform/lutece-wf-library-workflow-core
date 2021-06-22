@@ -170,5 +170,8 @@ public interface ITask
      * 
      * @return
      */
-    ITaskConfigService getTaskConfigService( );
+    default ITaskConfigService getTaskConfigService( )
+    {
+        return null;
+    }
 }
