@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflowcore.business.config;
 
+import java.util.Map;
+
 /**
  *
  * ITaskConfig
@@ -54,4 +56,14 @@ public interface ITaskConfig
      *            id task
      */
     void setIdTask( int idTask );
+    
+    /**
+     * Used when duplicating a workflow. <br />
+     * Must be implemented when a ITaskConfig contains a state id. 
+     * 
+     * @param stateMap
+     */
+    default void updateStates( Map<Integer, Integer> stateMap )
+    {
+    }
 }
