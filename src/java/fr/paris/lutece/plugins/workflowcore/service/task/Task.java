@@ -37,6 +37,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 
 /**
  *
@@ -50,6 +51,8 @@ public abstract class Task implements ITask
     private ITaskType _taskType;
     private Action _action;
     private int _nOrder;
+
+    private ITaskConfigService _taskConfigService;
 
     /**
      * {@inheritDoc}
@@ -124,5 +127,22 @@ public abstract class Task implements ITask
     public void setOrder( int nOrder )
     {
         this._nOrder = nOrder;
+    }
+
+    /**
+     * Set the task config service
+     * 
+     * @param taskConfigService
+     *            the task config service
+     */
+    public void setTaskConfigService( ITaskConfigService taskConfigService )
+    {
+        _taskConfigService = taskConfigService;
+    }
+
+    @Override
+    public ITaskConfigService getTaskConfigService( )
+    {
+        return _taskConfigService;
     }
 }

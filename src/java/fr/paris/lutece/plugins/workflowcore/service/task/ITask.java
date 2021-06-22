@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 
 /**
  *
@@ -163,4 +164,11 @@ public interface ITask
      *            the order
      */
     void setOrder( int nOrder );
+
+    /**
+     * Get the ITaskConfigService of the Task
+     * 
+     * @return
+     */
+    ITaskConfigService getTaskConfigService( );
 }
