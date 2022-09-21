@@ -50,6 +50,7 @@ public class ResourceWorkflowFilter
     private int _nIdState = ALL_INT;
     private Integer _nIdExternalParent;
     private Map<String, String> _workgroupKeyList;
+    private int _nIdAction = ALL_INT;
 
     /**
      *
@@ -200,4 +201,32 @@ public class ResourceWorkflowFilter
     {
         _nIdExternalParent = nIdExternalParent;
     }
+
+    /**
+    *
+    * @return the id of Action insert in the filter
+    */
+	public int getIdAction( ) {
+		return _nIdAction;
+	}
+
+	/**
+     * set the id of Action in the filter
+     * 
+     * @param nIdAction
+     *            the action id to insert in the filter
+     */
+	public void setIdAction( int nIdAction ) {
+		this._nIdAction = nIdAction;
+	}
+	
+	/**
+    *
+    * @return true if the filter contain an id of Action
+    *
+    */
+   public boolean containsIdAction( )
+   {
+       return ( _nIdAction != ALL_INT );
+   }
 }

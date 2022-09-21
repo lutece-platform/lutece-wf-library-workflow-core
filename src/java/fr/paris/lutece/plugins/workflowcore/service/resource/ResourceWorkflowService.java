@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.workflowcore.service.resource;
 import fr.paris.lutece.plugins.workflowcore.business.resource.IResourceWorkflowDAO;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflowFilter;
+import fr.paris.lutece.plugins.workflowcore.business.state.State;
 
 import java.util.List;
 import java.util.Map;
@@ -158,6 +159,15 @@ public class ResourceWorkflowService implements IResourceWorkflowService
     public List<ResourceWorkflow> getAllResourceWorkflowByState( int nIdState )
     {
         return _resourceWorkflowDAO.selectResourceWorkflowByState( nIdState );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ResourceWorkflow> getAllResourceWorkflowByListState( List<State> listStateBefore )
+    {
+        return _resourceWorkflowDAO.selectResourceWorkflowByListState( listStateBefore );
     }
 
     /**

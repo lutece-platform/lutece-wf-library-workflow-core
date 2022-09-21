@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.business.action.IActionDAO;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
+import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
@@ -61,6 +62,8 @@ public class ActionService implements IActionService
     private IResourceHistoryService _resourceHistoryService;
     @Inject
     private ITaskService _taskService;
+    @Inject
+    private IActionStateService _actionStateService;
 
     /**
      * {@inheritDoc}
@@ -69,6 +72,7 @@ public class ActionService implements IActionService
     public void create( Action action )
     {
         _actionDAO.insert( action );
+        _actionStateService.create( action );
         createLinkedActions( action );
     }
 
@@ -81,6 +85,8 @@ public class ActionService implements IActionService
         _actionDAO.store( action );
         removeLinkedActions( action.getId( ) );
         createLinkedActions( action );
+        
+        _actionStateService.update( action );
     }
 
     /**
@@ -112,6 +118,7 @@ public class ActionService implements IActionService
         }
 
         removeLinkedActions( nIdAction );
+        _actionStateService.remove( nIdAction );
 
         _actionDAO.delete( nIdAction );
     }
@@ -129,6 +136,7 @@ public class ActionService implements IActionService
         {
             action.setListIdsLinkedAction( getListIdsLinkedAction( nIdAction ) );
         }
+        action.setListStateBefore( _actionStateService.findByIdAction( nIdAction ) );
         return action;
     }
 
@@ -143,6 +151,7 @@ public class ActionService implements IActionService
         {
             action.setListIdsLinkedAction( getListIdsLinkedAction( nIdAction ) );
         }
+        action.setListStateBefore( _actionStateService.findByIdAction( nIdAction ) );
         return action;
     }
 
@@ -159,6 +168,7 @@ public class ActionService implements IActionService
             for ( Action action : listActions )
             {
                 action.setListIdsLinkedAction( getListIdsLinkedAction( action.getId( ) ) );
+                action.setListStateBefore( _actionStateService.findByIdAction( action.getId( ) ) );
             }
         }
 

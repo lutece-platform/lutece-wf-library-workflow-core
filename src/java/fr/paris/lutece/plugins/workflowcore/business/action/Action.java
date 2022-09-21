@@ -67,6 +67,7 @@ public class Action implements RBACResource, IReferenceItem
     private List<ITask> _listTasks;
     private int _nOrder;
     private boolean _bAutomaticReflexiveAction;
+    private List<State> _listStateBefore;
 
     /**
      *
@@ -354,4 +355,24 @@ public class Action implements RBACResource, IReferenceItem
     {
         return _listTasks ;
     }
+    
+    /**
+     * get the list of all state before associated to the action
+     * 
+     * @return 
+     *         the list of all state before associated to the action
+     */
+    public List<State> getListStateBefore() {
+		return _listStateBefore;
+	}
+
+    /**
+     * set the list of all state before associated to the action
+     * 
+     * @param listStateBefore
+     *            the list of all state before
+     */
+	public void setListStateBefore(List<State> listStateBefore) {
+		this._listStateBefore = listStateBefore;
+	}
 }
