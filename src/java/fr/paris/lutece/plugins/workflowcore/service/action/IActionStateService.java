@@ -2,10 +2,9 @@ package fr.paris.lutece.plugins.workflowcore.service.action;
 
 import java.util.List;
 
-import fr.paris.lutece.plugins.workflowcore.business.action.Action;
-import fr.paris.lutece.plugins.workflowcore.business.state.State;
-
 public interface IActionStateService {
+	
+	public static final String BEAN_SERVICE = "workflow.actionStateService";
 	
 	/**
      * Creation of an instance of action
@@ -13,7 +12,7 @@ public interface IActionStateService {
      * @param action
      *            The instance of action which contains the informations to store
      */
-    void create( Action action );
+    void create( int idAction, List<Integer> listIdStateBefore );
 
     /**
      * Update of action which is specified in parameter
@@ -21,7 +20,7 @@ public interface IActionStateService {
      * @param action
      *            The instance of action which contains the informations to update
      */
-    void update( Action action );
+    void update( int idAction, List<Integer> listIdStateBefore );
 
     /**
      * Remove action which is specified in parameter
@@ -41,6 +40,6 @@ public interface IActionStateService {
      *            the action id
      * @return the Action Object
      */
-    List<State> findByIdAction( int nIdAction );
+    List<Integer> findByIdAction( int nIdAction );
 
 }

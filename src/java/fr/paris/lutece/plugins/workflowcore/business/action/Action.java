@@ -58,7 +58,6 @@ public class Action implements RBACResource, IReferenceItem
     private String _strName;
     private String _strDescription;
     private Icon _icon;
-    private State _stateBefore;
     private State _stateAfter;
     private Workflow _workflow;
     private boolean _bAutomaticState;
@@ -67,7 +66,7 @@ public class Action implements RBACResource, IReferenceItem
     private List<ITask> _listTasks;
     private int _nOrder;
     private boolean _bAutomaticReflexiveAction;
-    private List<State> _listStateBefore;
+    private List<Integer> _listIdStateBefore;
 
     /**
      *
@@ -150,27 +149,6 @@ public class Action implements RBACResource, IReferenceItem
     public void setIcon( Icon icon )
     {
         _icon = icon;
-    }
-
-    /**
-     * Return the State of the document before processing the action
-     * 
-     * @return The StateBefore
-     */
-    public State getStateBefore( )
-    {
-        return _stateBefore;
-    }
-
-    /**
-     * Set the State of the document before processing the action
-     * 
-     * @param stateBefore
-     *            The StateBefore
-     */
-    public void setStateBefore( State stateBefore )
-    {
-        _stateBefore = stateBefore;
     }
 
     /**
@@ -362,8 +340,8 @@ public class Action implements RBACResource, IReferenceItem
      * @return 
      *         the list of all state before associated to the action
      */
-    public List<State> getListStateBefore() {
-		return _listStateBefore;
+    public List<Integer> getListIdStateBefore() {
+		return _listIdStateBefore;
 	}
 
     /**
@@ -372,7 +350,7 @@ public class Action implements RBACResource, IReferenceItem
      * @param listStateBefore
      *            the list of all state before
      */
-	public void setListStateBefore(List<State> listStateBefore) {
-		this._listStateBefore = listStateBefore;
+	public void setListIdStateBefore(List<Integer> listIdStateBefore) {
+		this._listIdStateBefore = listIdStateBefore;
 	}
 }

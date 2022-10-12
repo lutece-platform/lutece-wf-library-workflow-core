@@ -35,8 +35,6 @@ package fr.paris.lutece.plugins.workflowcore.service.resource;
 
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflow;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceWorkflowFilter;
-import fr.paris.lutece.plugins.workflowcore.business.state.State;
-
 import java.util.List;
 import java.util.Map;
 
@@ -172,9 +170,9 @@ public interface IResourceWorkflowService
     /**
      * Select All resourceWorkflow Object associated to the list state
      * 
-     * @param listStateBefore
-     *            list of state
+     * @param listIdStateBefore
+     *            list of id state
      * @return List of resourceWorkflow Object
      */
-	List<ResourceWorkflow> getAllResourceWorkflowByListState(List<State> listStateBefore);
+	List<ResourceWorkflow> getAllResourceWorkflowByListState(List<Integer> listIdStateBefore);
 }

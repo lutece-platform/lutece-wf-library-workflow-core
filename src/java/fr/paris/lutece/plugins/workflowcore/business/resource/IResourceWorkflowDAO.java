@@ -211,5 +211,5 @@ public interface IResourceWorkflowDAO
      *            list of workflow state
      * @return List of resourceWorkflow Object
      */
-	List<ResourceWorkflow> selectResourceWorkflowByListState(List<State> listStateBefore);
+	List<ResourceWorkflow> selectResourceWorkflowByListState(List<Integer> listIdStateBefore);
 }
