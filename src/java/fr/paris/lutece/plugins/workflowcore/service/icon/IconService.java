@@ -38,7 +38,7 @@ import fr.paris.lutece.plugins.workflowcore.business.icon.Icon;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  *

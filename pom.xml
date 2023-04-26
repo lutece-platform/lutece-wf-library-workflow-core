@@ -2,12 +2,12 @@
     <parent>
         <artifactId>lutece-global-pom</artifactId>
         <groupId>fr.paris.lutece.tools</groupId>
-        <version>6.0.0</version>
+        <version>8.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>library-workflow-core</artifactId>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Library Workflow Core</name>
     <description>Workflow Core library</description>
@@ -16,10 +16,10 @@
         <jiraProjectName>LIBRARYWORKFLOWCORE</jiraProjectName>
         <jiraComponentId>10674</jiraComponentId>
         <commons.lang.version>3.12.0</commons.lang.version>
-        <javax.inject.version>1</javax.inject.version>
-        <springVersion>5.3.18</springVersion>
+        <jakarta.inject.version>2.0.1</jakarta.inject.version>
+        <springVersion>6.0.8</springVersion>
         <common.beanutils.version>1.9.4</common.beanutils.version>
-        <log4j.version>2.17.1</log4j.version>
+        <log4j.version>2.20.0</log4j.version>
         <jackson.version>2.13.1</jackson.version>
         <sonar.sources>pom.xml,src/java</sonar.sources>
         <sonar.tests />
@@ -71,11 +71,12 @@
             <version>${commons.lang.version}</version>
         </dependency>
         <!-- @Inject API -->
+         <!-- @Inject API -->
         <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>${javax.inject.version}</version>
-        </dependency>
+	      <groupId>jakarta.inject</groupId>
+	      <artifactId>jakarta.inject-api</artifactId>
+	      <version>${jakarta.inject.version}</version>	
+	    </dependency>       
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>

@@ -38,7 +38,7 @@ import fr.paris.lutece.plugins.workflowcore.business.task.ITaskDAO;
 import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  *

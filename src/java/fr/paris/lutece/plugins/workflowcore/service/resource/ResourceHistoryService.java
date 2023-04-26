@@ -34,7 +34,7 @@
 package fr.paris.lutece.plugins.workflowcore.service.resource;
 
 import java.util.List;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import fr.paris.lutece.plugins.workflowcore.business.resource.IResourceHistoryDAO;
 import fr.paris.lutece.plugins.workflowcore.business.resource.IResourceUserHistoryDAO;

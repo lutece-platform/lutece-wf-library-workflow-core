@@ -1,7 +1,7 @@
 package fr.paris.lutece.plugins.workflowcore.service.action;
 
 import java.util.List;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import fr.paris.lutece.plugins.workflowcore.business.action.IActionStateDAO;
 
