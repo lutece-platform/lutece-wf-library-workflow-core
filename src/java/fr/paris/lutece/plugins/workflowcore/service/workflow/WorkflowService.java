@@ -523,7 +523,6 @@ public class WorkflowService implements IWorkflowService
                 // next state if not successful
                 resourceWorkflow.setState(alternativeState);
             }
-
         }
 
         resourceWorkflow.setWorkFlow( action.getWorkflow( ));
