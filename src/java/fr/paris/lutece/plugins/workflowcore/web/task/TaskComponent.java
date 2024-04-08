@@ -43,12 +43,12 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.util.Assert;
 
 import java.lang.reflect.InvocationTargetException;
 
 import java.util.Locale;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -177,14 +177,17 @@ public abstract class TaskComponent implements ITaskComponent
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void afterPropertiesSet( ) throws Exception
+    @PostConstruct
+    public void afterPropertiesSet( ) 
     {
-        Assert.notNull( _taskType, "The property 'taskType' is required." );
-
+        if (_taskType == null) {
+            throw new IllegalArgumentException("The property 'taskType' is required.");
+        }
         if ( _taskType.isConfigRequired( ) )
         {
-            Assert.notNull( _taskConfigService, "The property 'taskConfigService' is required." );
+        	if (_taskConfigService == null) {
+                throw new IllegalArgumentException("The property 'taskConfigService' is required.");
+            }
         }
     }
 

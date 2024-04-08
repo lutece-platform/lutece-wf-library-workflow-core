@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.workflowcore.web.task;
 import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 
-import org.springframework.beans.factory.InitializingBean;
 
 import java.util.Locale;
 
@@ -47,7 +46,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * ITaskComponent
  *
  */
-public interface ITaskComponent extends InitializingBean
+public interface ITaskComponent
 {
     /**
      * Set the task type
