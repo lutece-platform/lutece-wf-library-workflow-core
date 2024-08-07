@@ -53,7 +53,7 @@ public class InfoMarker
 
     private String _strDescription;
 
-    private Object _data;
+    private String _strValue;
 
     /**
      * Constructor
@@ -63,9 +63,9 @@ public class InfoMarker
      * @param data
      *            the value
      */
-     public InfoMarker (String marker, Object data) {
+     public InfoMarker (String marker, String strData) {
         _strMarker = marker;
-        _data = data;
+        _strValue = strData;
      }
 
     /**
@@ -90,12 +90,7 @@ public class InfoMarker
     }
 
     /**
-     * <p>
      * Gives the description of the marker.
-     * </p>
-     * <p>
-     * Used in the task configuration page
-     * </p>
      *
      * @return the description
      */
@@ -116,40 +111,13 @@ public class InfoMarker
     }
 
     /**
-        * Gives the value of the marker. The value is the actual value of the resource.
-        * Used when the notification is sent
-        *
-        * @return the value
-        */
-    public Object getData( )
-    {
-        return _data;
-    }
-
-    /**
-        * Sets the value of the marker
-        *
-        * @param data
-        *  the value to set
-        */
-    public void setData( Object data )
-    {
-        _data = data ;
-    }
-    /**
-     * <p>
      * Gives the value of the marker. The value is the actual value of the resource.
-     * </p>
-     * <p>
-     * Used when the notification is sent
-     * </p>
      *
      * @return the value
      */
-    @Deprecated
     public String getValue( )
     {
-        return ( _data != null ? _data.toString( ) : null );
+        return _strValue;
     }
 
     /**
@@ -158,10 +126,8 @@ public class InfoMarker
      * @param data
      *            the value to set
      */
-    @Deprecated
     public void setValue( String strData )
     {
-        _data = strData;
+        _strValue = strData;
     }
-
 }
