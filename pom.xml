@@ -75,6 +75,7 @@
         <dependency>
 	      <groupId>jakarta.inject</groupId>
 	      <artifactId>jakarta.inject-api</artifactId>
+	      <scope>provided</scope>
 	    </dependency>       
         <!-- BeanUtils -->
         <dependency>
