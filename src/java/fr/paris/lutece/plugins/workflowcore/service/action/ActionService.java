@@ -144,8 +144,9 @@ public class ActionService implements IActionService
         if ( action != null )
         {
             action.setListIdsLinkedAction( getListIdsLinkedAction( nIdAction ) );
+            action.setListIdStateBefore( _actionStateService.findByIdAction( nIdAction ) );
         }
-        action.setListIdStateBefore( _actionStateService.findByIdAction( nIdAction ) );
+        
         return action;
     }
     
@@ -159,8 +160,9 @@ public class ActionService implements IActionService
         if ( action != null )
         {
             action.setListIdsLinkedAction( getListIdsLinkedAction( nIdAction ) );
+            action.setListIdStateBefore( _actionStateService.findByIdAction( nIdAction ) );
         }
-        action.setListIdStateBefore( _actionStateService.findByIdAction( nIdAction ) );
+        
         return action;
     }
 
