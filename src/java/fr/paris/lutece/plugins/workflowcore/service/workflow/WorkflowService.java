@@ -455,7 +455,7 @@ public class WorkflowService implements IWorkflowService
      */
     @Override
     public void doProcessAction( int nIdResource, String strResourceType, int nIdAction, Integer nIdExternalParent, HttpServletRequest request, Locale locale,
-            boolean bIsAutomatic, String strUserAccessCode, User user, List<ResourceHistory> actionHistoryResourceList )
+            boolean bIsAutomatic, String strUserAccessCode, User user )
     {
         Action action = _actionService.findByPrimaryKey( nIdAction );
 
@@ -496,7 +496,6 @@ public class WorkflowService implements IWorkflowService
                 {
                 	// stop processing the tasks if a task returns a failure
                 	isSuccess = false;
-                	resourceHistory.setStatus( ResourceHistory.UNSUCCESS );
                 	break;
                 }
             }
@@ -531,11 +530,6 @@ public class WorkflowService implements IWorkflowService
         resourceWorkflow.setExternalParentId( nIdExternalParent );
         _resourceWorkflowService.update( resourceWorkflow );
 
-        if ( actionHistoryResourceList != null )
-        {
-            actionHistoryResourceList.add( resourceHistory );
-        }
-
         if ( ( resourceWorkflow.getState( ) != null ) && !action.isAutomaticReflexiveAction( ) )
         {
         	final  State nextState = resourceWorkflow.getState( );
@@ -555,20 +549,10 @@ public class WorkflowService implements IWorkflowService
 
             if ( CollectionUtils.isNotEmpty( listAction ) && ( listAction.get( 0 ) != null ) )
             {
-                doProcessAction( nIdResource, strResourceType, listAction.get( 0 ).getId( ), nIdExternalParent, request, locale, true, null, user, actionHistoryResourceList );
+                doProcessAction( nIdResource, strResourceType, listAction.get( 0 ).getId( ), nIdExternalParent, request, locale, true, null, user );
             }
         }
 
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doProcessAction( int nIdResource, String strResourceType, int nIdAction, Integer nIdExternalParent, HttpServletRequest request, Locale locale,
-            boolean bIsAutomatic, String strUserAccessCode, User user )
-    {
-        doProcessAction( nIdResource, strResourceType, nIdAction, nIdExternalParent, request, locale, bIsAutomatic, strUserAccessCode, null, null );
     }
 
     /**
