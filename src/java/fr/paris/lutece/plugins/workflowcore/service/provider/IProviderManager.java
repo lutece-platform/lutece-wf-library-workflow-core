@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2021, City of Paris
+ * Copyright (c) 2002-2025, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,34 +33,51 @@
  */
 package fr.paris.lutece.plugins.workflowcore.service.provider;
 
-/**
- * This class represents a manager of providers
- *
- * @deprecated use {@link IProviderManager} instead
- * This class will be removed in future versions.
- */
-@Deprecated( since = "4.0.0", forRemoval = true )
-public abstract class AbstractProviderManager implements IProviderManager
+import java.util.Collection;
+
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import jakarta.servlet.http.HttpServletRequest;
+
+public interface IProviderManager 
 {
-    private final String _strId;
+    /**
+     * Gives the provider description for all the providers managed by this manager. Must not be {@code null} since the manager must manage at least one
+     * provider.
+     * 
+     * @param task
+     *            the workflow task calling this method
+     * @return all the provider descriptions
+     */
+    Collection<ProviderDescription> getAllProviderDescriptions( ITask task );
 
     /**
-     * Constructor
+     * Gives the description of the specified provider
      * 
-     * @param strId
-     *            the id of the manager
+     * @param strProviderId
+     *            the provider id
+     * @return the provider description
      */
-    public AbstractProviderManager( String strId )
-    {
-        _strId = strId;
-    }
+    ProviderDescription getProviderDescription( String strProviderId );
 
     /**
-     * {@inheritDoc}
+     * Creates the specified provider for the specified resource.
      * 
+     * @param strProviderId
+     *            the provider id
+     * @param resourceHistory
+     *            the resource id
+     * @param request
+     *            the request
+     * @return the provider
      */
-    public String getId( )
-    {
-        return _strId;
-    }
+    IProvider createProvider( String strProviderId, ResourceHistory resourceHistory, HttpServletRequest request );
+    
+    /**
+     * Gives the id of the manager
+     * 
+     * @return the id
+     */
+    String getId( );
+
 }
