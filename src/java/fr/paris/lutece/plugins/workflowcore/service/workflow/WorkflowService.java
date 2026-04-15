@@ -547,7 +547,8 @@ public class WorkflowService implements IWorkflowService
 
             List<Action> listAction = _actionService.getListActionByFilter( actionFilter );
 
-            if ( CollectionUtils.isNotEmpty( listAction ) && ( listAction.get( 0 ) != null ) )
+            // Prevent automatic action to relaunch itself.
+            if ( CollectionUtils.isNotEmpty( listAction ) && ( listAction.get( 0 ) != null ) && listAction.get( 0 ).getId( ) != action.getId() )
             {
                 doProcessAction( nIdResource, strResourceType, listAction.get( 0 ).getId( ), nIdExternalParent, request, locale, true, null, user );
             }
