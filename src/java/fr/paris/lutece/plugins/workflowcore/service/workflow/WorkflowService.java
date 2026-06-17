@@ -331,6 +331,15 @@ public class WorkflowService implements IWorkflowService
     @Override
     public State getState( int nIdResource, String strResourceType, int nIdWorkflow, Integer nIdExternalParent )
     {
+        return getState( nIdResource, strResourceType, nIdWorkflow, nIdExternalParent, Locale.getDefault( ) );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public State getState( int nIdResource, String strResourceType, int nIdWorkflow, Integer nIdExternalParent, Locale locale )
+    {
         State resourceState = _stateService.findByResource( nIdResource, strResourceType, nIdWorkflow );
 
         if ( resourceState == null )
@@ -348,7 +357,7 @@ public class WorkflowService implements IWorkflowService
             {
                 _resourceWorkflowService.create( resourceWorkflow );
                 resourceState = resourceWorkflow.getState( );
-                doProcessAutomaticReflexiveActions( nIdResource, strResourceType, resourceState.getId( ), nIdExternalParent, Locale.getDefault( ) );
+                doProcessAutomaticReflexiveActions( nIdResource, strResourceType, resourceState.getId( ), nIdExternalParent, locale );
             }
         }
 
