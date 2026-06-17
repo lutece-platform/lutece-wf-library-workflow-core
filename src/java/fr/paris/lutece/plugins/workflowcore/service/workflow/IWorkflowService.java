@@ -141,6 +141,23 @@ public interface IWorkflowService
     State getState( int nIdResource, String strResourceType, int nIdWorkflow, Integer nIdExternalParentId );
 
     /**
+     * returns the state of a given resource
+     *
+     * @param nIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
+     * @param nIdWorkflow
+     *            the workflow id
+     * @param nIdExternalParentId
+     *            the external parent id
+     * @param locale
+     *            the locale to be used
+     * @return the state of a given resource
+     */
+    State getState( int nIdResource, String strResourceType, int nIdWorkflow, Integer nIdExternalParentId, Locale locale );
+
+    /**
      * returns all state of a given workflow
      * 
      * @param nIdWorkflow
