@@ -33,12 +33,14 @@
  */
 package fr.paris.lutece.plugins.workflowcore.business.config;
 
+import java.io.Serializable;
+
 /**
  *
  * TaskConfig
  *
  */
-public abstract class TaskConfig implements ITaskConfig
+public abstract class TaskConfig implements ITaskConfig, Serializable
 {
     private int _nIdTask;
 
