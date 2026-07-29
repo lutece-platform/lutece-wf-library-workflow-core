@@ -164,13 +164,16 @@ public class ResourceHistoryService implements IResourceHistoryService
     {
         List<ResourceHistory> listResourceHistory = _resourceHistoryDAO.selectByResource( nIdResource, strResourceType, nIdWorkflow );
 
-        for ( ResourceHistory resourceHistory : listResourceHistory )
+        if ( CollectionUtils.isEmpty( listResourceHistory ) )
         {
-            resourceHistory.setAction( _actionService.findByPrimaryKey( resourceHistory.getAction( ).getId( ) ) );
-            resourceHistory.setResourceUserHistory( _resourceUserHistoryDAO.load( resourceHistory.getId( ) ) );
+            return null;
         }
 
-        return CollectionUtils.isNotEmpty( listResourceHistory ) ? listResourceHistory.get( 0 ) : null;
+        ResourceHistory resourceHistory = listResourceHistory.get( 0 );
+        resourceHistory.setAction( _actionService.findByPrimaryKey( resourceHistory.getAction( ).getId( ) ) );
+        resourceHistory.setResourceUserHistory( _resourceUserHistoryDAO.load( resourceHistory.getId( ) ) );
+
+        return resourceHistory;
     }
 
     /**
