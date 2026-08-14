@@ -146,4 +146,11 @@ public interface ITaskComponentManager
      * @return the url to go after perform task configuration
      */
     String doSaveConfig( HttpServletRequest request, Locale locale, ITask task );
+
+    /**
+     * Create a default Config if needed
+     * @param task
+     *            the task
+     */
+    void doCreateDefaultConfig( ITask task );
 }
