@@ -140,4 +140,13 @@ public interface ITaskComponent extends InitializingBean
      * @return the url to go after perform task configuration
      */
     String doSaveConfig( HttpServletRequest request, Locale locale, ITask task );
+
+    /**
+     * create a default configuration if needed
+     * @param task
+     *            the task
+     */
+    default void doCreateDefaultConfig( ITask task )
+    {
+    }
 }
