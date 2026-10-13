@@ -186,4 +186,38 @@ public interface IResourceWorkflowService
      * @return List of resourceWorkflow Object
      */
 	List<ResourceWorkflow> getAllResourceWorkflowByListState(List<Integer> listIdStateBefore);
+
+    /**
+     * Claims a resource for the processing of an action
+     *
+     * @param nIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
+     * @param nIdWorkflow
+     *            the workflow id
+     * @param listIdStateBefore
+     *            the states from which the action can be processed
+     * @return true if the resource is claimed, false if another action holds it or its state is not one of the given states
+     * @see fr.paris.lutece.plugins.workflowcore.business.resource.IResourceWorkflowDAO#lock(int, String, int, List)
+     */
+    default boolean lock( int nIdResource, String strResourceType, int nIdWorkflow, List<Integer> listIdStateBefore )
+    {
+        return true;
+    }
+
+    /**
+     * Releases the claim of a resource
+     *
+     * @param nIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
+     * @param nIdWorkflow
+     *            the workflow id
+     */
+    default void unlock( int nIdResource, String strResourceType, int nIdWorkflow )
+    {
+        // No claim support
+    }
 }

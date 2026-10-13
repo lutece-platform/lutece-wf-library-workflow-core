@@ -212,4 +212,22 @@ public class ResourceWorkflowService implements IResourceWorkflowService
     {
         return _resourceWorkflowDAO.getListIdStateByListId( lListIdRessource, nIdWorflow, strResourceType, nIdExternalParentId );
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean lock( int nIdResource, String strResourceType, int nIdWorkflow, List<Integer> listIdStateBefore )
+    {
+        return _resourceWorkflowDAO.lock( nIdResource, strResourceType, nIdWorkflow, listIdStateBefore );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void unlock( int nIdResource, String strResourceType, int nIdWorkflow )
+    {
+        _resourceWorkflowDAO.unlock( nIdResource, strResourceType, nIdWorkflow );
+    }
 }

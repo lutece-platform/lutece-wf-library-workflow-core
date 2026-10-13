@@ -223,4 +223,39 @@ public interface IResourceWorkflowDAO
      */
 	List<ResourceWorkflow> selectResourceWorkflowByListState(List<Integer> listIdStateBefore);
 
+    /**
+     * Claims a resource for the processing of an action, in one atomic statement: the resource must be in one of the given
+     * states and not claimed by another action (a claim older than the configured timeout is ignored). The claim is
+     * visible to every instance sharing the database.
+     *
+     * @param nIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
+     * @param nIdWorkflow
+     *            the workflow id
+     * @param listIdStateBefore
+     *            the states from which the action can be processed
+     * @return true if the resource is claimed, false if another action holds it or its state is not one of the given states
+     */
+    default boolean lock( int nIdResource, String strResourceType, int nIdWorkflow, List<Integer> listIdStateBefore )
+    {
+        // No claim support: the action is processed as before
+        return true;
+    }
+
+    /**
+     * Releases the claim of a resource
+     *
+     * @param nIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
+     * @param nIdWorkflow
+     *            the workflow id
+     */
+    default void unlock( int nIdResource, String strResourceType, int nIdWorkflow )
+    {
+        // No claim support
+    }
 }

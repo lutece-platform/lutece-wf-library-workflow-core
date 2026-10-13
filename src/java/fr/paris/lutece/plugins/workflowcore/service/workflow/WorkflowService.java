@@ -36,16 +36,20 @@ package fr.paris.lutece.plugins.workflowcore.service.workflow;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
@@ -60,6 +64,7 @@ import fr.paris.lutece.plugins.workflowcore.business.task.ITaskType;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.IWorkflowDAO;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.plugins.workflowcore.business.workflow.WorkflowFilter;
+import fr.paris.lutece.plugins.workflowcore.exception.ResourceWorkflowLockedException;
 import fr.paris.lutece.plugins.workflowcore.exception.WorkflowRuntimeException;
 import fr.paris.lutece.plugins.workflowcore.service.action.IActionService;
 import fr.paris.lutece.plugins.workflowcore.service.prerequisite.IAutomaticActionPrerequisiteService;
@@ -82,6 +87,10 @@ public class WorkflowService implements IWorkflowService
      * Name of the bean of this service
      */
     public static final String BEAN_SERVICE = "workflow.workflowService";
+    private static final Logger _logger = LogManager.getLogger( "lutece.workflow" );
+    // Resources claimed by the actions running in the current thread: the automatic and reflexive actions chained by an
+    // action run under the claim of this action instead of claiming the resource again
+    private static final ThreadLocal<Set<String>> _claimedResources = ThreadLocal.withInitial( HashSet::new );
     @Inject
     private ITaskFactory _taskFactory;
     @Inject
@@ -486,6 +495,43 @@ public class WorkflowService implements IWorkflowService
             }
         }
 
+        // Claim the resource in the database before running the tasks: a concurrent request on the same resource, on this
+        // instance or another one, would otherwise pass the same check and run the tasks twice
+        int nIdWorkflow = action.getWorkflow( ).getId( );
+        String strClaimKey = nIdResource + ":" + strResourceType + ":" + nIdWorkflow;
+        Set<String> setClaimedResources = _claimedResources.get( );
+        boolean bOutermostAction = setClaimedResources.add( strClaimKey );
+
+        if ( bOutermostAction && !_resourceWorkflowService.lock( nIdResource, strResourceType, nIdWorkflow, action.getListIdStateBefore( ) ) )
+        {
+            releaseClaimKey( setClaimedResources, strClaimKey );
+
+            throw new ResourceWorkflowLockedException( nIdResource, strResourceType, nIdAction );
+        }
+
+        try
+        {
+            doProcessClaimedAction( action, nIdResource, strResourceType, nIdAction, nIdExternalParent, request, locale, bIsAutomatic, strUserAccessCode,
+                    user );
+        }
+        finally
+        {
+            if ( bOutermostAction )
+            {
+                releaseClaimKey( setClaimedResources, strClaimKey );
+                unlock( nIdResource, strResourceType, nIdWorkflow );
+            }
+        }
+    }
+
+    /**
+     * Processes an action on a resource claimed by the current thread: history, tasks, next state and chained actions
+     */
+    private void doProcessClaimedAction( Action action, int nIdResource, String strResourceType, int nIdAction, Integer nIdExternalParent,
+            HttpServletRequest request, Locale locale, boolean bIsAutomatic, String strUserAccessCode, User user )
+    {
+        ResourceWorkflow resourceWorkflow;
+
         // Create ResourceHistory
         ResourceHistory resourceHistory = _resourceHistoryFactory.newResourceHistory( nIdResource, strResourceType, action, strUserAccessCode, bIsAutomatic,
                 user );
@@ -562,6 +608,35 @@ public class WorkflowService implements IWorkflowService
             }
         }
 
+    }
+
+    /**
+     * Removes a claim of the current thread
+     */
+    private static void releaseClaimKey( Set<String> setClaimedResources, String strClaimKey )
+    {
+        setClaimedResources.remove( strClaimKey );
+
+        if ( setClaimedResources.isEmpty( ) )
+        {
+            _claimedResources.remove( );
+        }
+    }
+
+    /**
+     * Releases the claim of a resource in the database. A failure is logged and not thrown, so it does not hide the
+     * exception of the action (the claim is released anyway by the rollback of the transaction or by its timeout)
+     */
+    private void unlock( int nIdResource, String strResourceType, int nIdWorkflow )
+    {
+        try
+        {
+            _resourceWorkflowService.unlock( nIdResource, strResourceType, nIdWorkflow );
+        }
+        catch( RuntimeException e )
+        {
+            _logger.error( "Unable to release the claim of the resource {} {} (workflow {})", strResourceType, nIdResource, nIdWorkflow, e );
+        }
     }
 
     /**
