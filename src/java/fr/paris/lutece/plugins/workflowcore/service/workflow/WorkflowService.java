@@ -556,10 +556,10 @@ public class WorkflowService implements IWorkflowService
             }
             catch ( Exception e )
             {
-                // Revert the creation of the resource history
-                _resourceHistoryService.remove( resourceHistory.getId( ) );
+                WorkflowRuntimeException exception = new WorkflowRuntimeException( "WorkflowService - Error when executing task ID " + task.getId( ), e );
+                revertResourceHistory( resourceHistory.getId( ), listActionTasks, exception );
 
-                throw new WorkflowRuntimeException( "WorkflowService - Error when executing task ID " + task.getId( ), e );
+                throw exception;
             }
         }
 
@@ -608,6 +608,36 @@ public class WorkflowService implements IWorkflowService
             }
         }
 
+    }
+
+    /**
+     * Reverts the creation of the resource history of an action whose task failed. The information written by the tasks already processed
+     * references the history, so it is removed first. A failure of the revert is added to the exception of the task as suppressed and
+     * logged, so it never hides the exception of the task.
+     *
+     * @param nIdResourceHistory
+     *            the resource history id
+     * @param listActionTasks
+     *            the tasks of the action
+     * @param exception
+     *            the exception of the task, thrown by the caller
+     */
+    private void revertResourceHistory( int nIdResourceHistory, List<ITask> listActionTasks, WorkflowRuntimeException exception )
+    {
+        try
+        {
+            for ( ITask task : listActionTasks )
+            {
+                task.doRemoveTaskInformation( nIdResourceHistory );
+            }
+
+            _resourceHistoryService.remove( nIdResourceHistory );
+        }
+        catch( RuntimeException e )
+        {
+            exception.addSuppressed( e );
+            _logger.error( "Unable to revert the resource history {} after the failure of a task", nIdResourceHistory, e );
+        }
     }
 
     /**
