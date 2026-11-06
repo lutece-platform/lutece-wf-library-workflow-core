@@ -2,13 +2,13 @@
 	<parent>
 		<artifactId>lutece-global-pom</artifactId>
 		<groupId>fr.paris.lutece.tools</groupId>
-		<version>8.0.0</version>
+		<version>8.0.3</version>
 		<relativePath />
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.paris.lutece.plugins</groupId>
 	<artifactId>library-workflow-core</artifactId>
-	<version>4.0.2-SNAPSHOT</version>
+	<version>4.0.2-beta-03</version>
 	<packaging>jar</packaging>
 	<name>Library Workflow Core</name>
 	<description>Workflow Core library</description>
